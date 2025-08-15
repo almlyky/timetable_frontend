@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-00&fq^1*8e6i38=qgao=j$+ji_#u0h#fgvuu88=!zc=28x00-y
 # SECRET_KEY = "django-insecure-^9r_$2&)yhw9c$t&iq0l9q_nmh^mi8&w8c3@*7jn)nlk2%p-pj" # secret_key for backend
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','http://127.0.0.1:8001','timetable-backend-nz88.onrender.com','timetable-frontend-mw47.onrender.com']
