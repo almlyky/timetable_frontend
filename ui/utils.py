@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 from django.core.cache import cache
 from urllib.parse import urlparse, parse_qs
 from django.middleware.csrf import get_token
-BASE_API_URL = "http://127.0.0.1:8001/api/"
+BASE_API_URL = "https://timetable-backend-nz88.onrender.com/api/"
 
 class Endpoints:
     login = "login/"

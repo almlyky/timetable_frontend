@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static BASE_API_URL = "http://127.0.0.1:8001/api/";
+  static BASE_API_URL = "https://timetable-backend-nz88.onrender.com/api/";
 
   static login = "login/";
   static logout = "logout/";
