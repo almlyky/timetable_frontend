@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
 from django.core.cache import cache
 from urllib.parse import urlparse, parse_qs
+from django.middleware.csrf import get_token
 BASE_API_URL = "http://127.0.0.1:8001/api/"
 
 class Endpoints:
@@ -197,6 +198,10 @@ def _api_request(method, endpoint, request, is_retry=False, **kwargs):
 
     if request and 'token' in request.session:
         headers["Authorization"] = f"Bearer {request.session['token']}"
+    
+    if request:
+        csrf_token = get_token(request)
+        headers["X-CSRFToken"] = csrf_token  # مهم: X-CSRFToken هو الاسم الذي يتوقعه Django
     
     kwargs["headers"] = headers
     
