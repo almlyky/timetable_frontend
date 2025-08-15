@@ -1,0 +1,71 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block page_header_title %}
+الملف الشخصي
+{% endblock %}
+
+{% block content %}
+
+{# خلفية عصرية ومنظمة #}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl">
+        
+        {# زر إضافة مستخدم (يظهر للمدير فقط) - تم تحسين مكانه وتصميمه #}
+        {% if teacher.is_superuser %}
+        <div class="flex justify-end mb-4">
+            <a href="{% url 'create_user' %}" class="inline-flex text-white dark:text-white hover:text-white items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 font-semibold text-sm rounded-lg shadow-md transition-transform transform hover:scale-105">
+                <i class="fas fa-plus mr-2 text-white"></i>
+                إضافة مستخدم جديد
+            </a>
+        </div>
+        {% endif %}
+
+        {# بطاقة الملف الشخصي الرئيسية #}
+        <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-slate-700 overflow-hidden">
+            
+            {# زخرفة في الزاوية #}
+            <div class="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-blue-100 dark:bg-slate-700/50 rounded-full opacity-50"></div>
+
+            <div class="relative z-10">
+                <div class="flex flex-col items-center mb-8">
+                    {# صورة رمزية (Avatar) #}
+                    <div class="w-24 h-24 bg-blue-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4 border-4 border-white dark:border-slate-800 shadow-lg">
+                        <i class="fas fa-user text-4xl text-blue-500 dark:text-blue-400"></i>
+                    </div>
+                    
+                    {# اسم المستخدم كعنوان رئيسي #}
+                    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">{{ teacher.username }}</h1>
+                    
+                    {# البريد الإلكتروني كعنوان فرعي #}
+                    <p class="text-md text-gray-500 dark:text-gray-400 mt-1">{{ teacher.email }}</p>
+                </div>
+
+                {# رسائل النظام (مثل رسائل النجاح والخطأ) #}
+                {% include "message.html" %}
+                
+                <div class="border-t border-gray-200 dark:border-slate-700 my-8"></div>
+
+                {# قسم إعادة تعيين كلمة المرور #}
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">أمان الحساب</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                        لأمان حسابك، يمكنك إرسال رابط لإعادة تعيين كلمة المرور إلى بريدك الإلكتروني المسجل.
+                    </p>
+                    
+                    <form method="get" action="{% url 'send_reseat_mail' %}">
+                        <button type="submit" 
+                                class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-lg rounded-lg shadow-lg 
+                                       transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
+                            <i class="fas fa-key mr-3 text-xl"></i>
+                            إرسال رابط إعادة التعيين
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "messagejs.html" %}
+{% endblock %}

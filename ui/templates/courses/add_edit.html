@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_header_title %}
+    {{ page_title }}
+{% endblock %}
+
+{% block content %}
+{% include "message.html" %}
+<div class="container mx-auto px-4 py-10 sm:px-6 lg:px-8">
+    <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-8 sm:p-10 max-w-2xl mx-auto border border-gray-100 dark:border-gray-700">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 text-center leading-tight">
+            {{ page_title }}
+        </h2>
+
+        <form id="courseForm" method="POST">
+        {% comment %} <form method="POST" action="{% if subject %}{% url 'edit_course' subject.id %}{% else %}{% url 'add_course' %}{% endif %}"> {% endcomment %}
+            
+            {% csrf_token %}
+            {% if subject %}
+            <input type="hidden" name="form_type" value="edit">
+            <input type="hidden" id="subject_id" value="{{ subject.id }}">
+            {% else %}
+            <input type="hidden" name="form_type" value="add">
+            {% endif %}
+            {# حقل اسم المادة والفصل الدراسي والمستوى #}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-7 gap-x-6">
+                <div>
+                    <label for="subject_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        اسم المادة <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="subject_name"
+                        name="subject_name"
+                        class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-500 transition duration-200 ease-in-out transform hover:scale-[1.01]"
+                        placeholder="ادخل اسم المقرر"
+                        value="{{ subject.subject_name|default:'' }}"
+                        required
+                    >
+                </div>
+
+                {# الفصل الدراسي #}
+                <div>
+                    <label for="term" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        الفصل الدراسي <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                        id="term"
+                        name="term"
+                        class="form-select w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-200 transition duration-200 ease-in-out transform hover:scale-[1.01]"
+                        required
+                    >
+                        <option value="" disabled {% if not subject.term %}selected{% endif %}>اختر الفصل الدراسي</option>
+                        <option value="term1" {% if subject.term == "term1" %}selected{% endif %}>الأول</option>
+                        <option value="term2" {% if subject.term == "term2" %}selected{% endif %}>الثاني</option>
+                    </select>
+                </div>
+            </div>
+
+            {# أزرار الإجراءات #}
+            <div class="flex flex-col sm:flex-row justify-start gap-3 sm:gap-4 mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
+                <button type="submit" class="inline-flex items-center justify-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 group">
+                    حفظ المادة
+                </button>
+                <a href="{% url 'courses_management' %}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-base font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 group">
+                    إلغاء
+                </a>
+            </div>
+        </form>
+    </div>
+    <div id="subjects_list" class="hidden">
+
+    </div>
+</div>
+{% include "delete_modal.html" %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'src/js/api_form.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const subjectIdInput = document.getElementById("subject_id");
+    const isEditMode = !!subjectIdInput;
+    const subjectId = isEditMode ? subjectIdInput.value : null;
+
+    window.subjectForm = new APIFormManager({
+      formId: "courseForm",
+      //apiBaseUrl: apiBase,
+      listContainerId: null,
+      endPoint: 'subjects/',
+      getFormData: () => {
+        const name = document.getElementById("subject_name").value.trim();
+        const term = document.getElementById("term").value;
+        if (!name) throw new Error("الرجاء إدخال اسم المادة.");
+        if (!term) throw new Error("الرجاء اختيار الفصل الدراسي.");
+        return { subject_name: name, term: term };
+      },
+      populateForm: (data) => {
+        document.getElementById("subject_name").value = data.subject_name || "";
+        document.getElementById("term").value = data.term || "";
+      }
+    });
+
+    if (isEditMode) {
+      window.subjectForm.handleEditStart(subjectId);
+    }
+  });
+</script>
+
+{% endblock %}

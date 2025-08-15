@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}لوحة التحكم{% endblock %} - ScheduleEase</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+    <link rel="stylesheet" href="{% static '/src/css/style.css' %}" />
+    <link rel="stylesheet" href="{% static '/src/css/header2_style.css' %}" />
+    <link rel="stylesheet" href="{% static '/src/css/message_style.css' %}" />
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class', 
+            theme: {
+                extend: {
+                    colors: {
+                        customBlue: '#288cfa',
+                        customGreen: '#2E865F',
+                        customYellow: '#d4ac0d',
+                        customPurple: '#8e44ad',
+                        customRed: '#e74c3c',
+                    }
+                }
+            }
+        };
+    </script>
+    
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100 dark:bg-[#1f2937]"> 
+    
+    {% include "message.html" %}
+
+    {% include "header2.html" %}
+    
+    <div class="flex flex-grow flex-col md:flex-row">
+        
+        <div id="mainContent" class="flex-grow flex flex-col">
+            <main class="flex-1 p-8 overflow-y-auto mt-4">
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+    {% include "footer.html" %} 
+    <script src="{% static 'src/js/mode.js' %}"></script>
+
+    
+    {% block extra_js %}
+    {% endblock %}
+</body>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileNavLinks = document.getElementById('mobileNavDesplay');
+            const mainContent = document.getElementById('mainContent');
+            if (mobileMenuToggle && mobileNavLinks) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    const isExpanded = mobileNavLinks.classList.toggle('active');
+                    mainContent.style.marginTop = isExpanded ? '310px' : '0';
+                    mobileMenuToggle.setAttribute('aria-expanded', isExpanded); // تحديث حالة الوصولية
+                });
+
+                document.addEventListener('click', (event) => {
+                    console.log('Clicked outside:', event.target); // لتتبع النقرات
+                    if (!mobileMenuToggle.contains(event.target) && !mobileNavLinks.contains(event.target)) {
+                        if (mobileNavLinks.classList.contains('active')) {
+                            mobileNavLinks.classList.remove('active');
+                            mobileMenuToggle.setAttribute('aria-expanded', false);
+                        }
+                    }
+                });
+
+                // إغلاق القائمة عند تغيير حجم الشاشة إلى وضع سطح المكتب
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth >= 768 && mobileNavLinks.classList.contains('active')) {
+                        mobileNavLinks.classList.remove('active');
+                        mobileMenuToggle.setAttribute('aria-expanded', false);
+
+                    }
+                });
+            }
+        });
+    </script>
+</html>
