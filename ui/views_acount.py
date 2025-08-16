@@ -12,6 +12,31 @@ from .utils import *
 # class MyTokenObtainPairView(TokenObtainPairView):
 #     serializer_class = MyTokenObtainPairSerializer
     
+# def LoginView(request):
+#     if request.method == "GET":
+#         return render(request, 'login.html')
+#     if request.method == "POST":
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+#         data = {
+#             "username": username,
+#             "password": password
+#         }
+#         response = api_post(Endpoints.login, data,request)
+#         datatokens={}
+#         if response:
+#             datatokens=response['data']
+#         if response and datatokens is not None:
+#             tokens = datatokens.get("tokens")
+#             token=tokens['access']
+#             user=api_get_with_token(Endpoints.user,token=token)
+#             request.session['user']=user
+#             request.session['token'] = token
+#             request.session['refresh_token'] = tokens['refresh']
+#             return redirect('dashboard')  # Redirect to a home page or dashboard
+#         else:
+#             return render(request,'login.html',{"username":username})
+        
 def LoginView(request):
     if request.method == "GET":
         return render(request, 'login.html')
@@ -22,22 +47,25 @@ def LoginView(request):
             "username": username,
             "password": password
         }
-        response = api_post(Endpoints.login, data,request)
-        datatokens={}
+        # response = api_post(Endpoints.login, data,request)
+        response=requests.post(f"{BASE_API_URL}{Endpoints.login}",data=data)
+        # print(response)
+        if response.status_code==400:
+            messages.error(request=request,message="لا يمكن ترك حقل فارف")
+        if response.status_code==401:
+            messages.error(request=request,message="خطأ في اسم المستخدم او كلمة المرور")
+
         if response:
-            datatokens=response['data']
-        if response and datatokens is not None:
-            tokens = datatokens.get("tokens")
-            token=tokens['access']
+            token=response.get('access')
+            refresh= response.get('refresh')
             user=api_get_with_token(Endpoints.user,token=token)
             request.session['user']=user
             request.session['token'] = token
-            request.session['refresh_token'] = tokens['refresh']
+            request.session['refresh_token'] = refresh
             return redirect('dashboard')  # Redirect to a home page or dashboard
         else:
             return render(request,'login.html',{"username":username})
         
-
 
 @api_view(['GET'])
 def send_reseat_mail(request):
