@@ -29,7 +29,12 @@ SECRET_KEY = "django-insecure-00&fq^1*8e6i38=qgao=j$+ji_#u0h#fgvuu88=!zc=28x00-y
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','http://127.0.0.1:8001','timetable-backend-nz88.onrender.com','timetable-frontend-mw47.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1',
+                 'http://127.0.0.1:8001',
+                 'timetable-backend-nz88.onrender.com',
+                #  'timetable-frontend-mw47.onrender.com',
+                 'timetable-frontend-rgn6.onrender.com'
+]
 
 
 # Application definition
@@ -54,8 +59,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "ui.middleware.IsLoginMiddleware",
-    # "ui.middleware.IsAdminMiddleware",
+    "ui.middleware.IsLoginMiddleware",
+    "ui.middleware.IsAdminMiddleware",
 ]
 
 ROOT_URLCONF = "project.urls"
