@@ -55,7 +55,8 @@ def LoginView(request):
         if response.status_code==401:
             messages.error(request=request,message="خطأ في اسم المستخدم او كلمة المرور")
 
-        if response:
+        if response.json():
+            response=response.json()
             token=response.get('access')
             refresh= response.get('refresh')
             user=api_get_with_token(Endpoints.user,token=token)
